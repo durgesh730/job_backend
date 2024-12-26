@@ -1,0 +1,216 @@
+const jwt = require('jsonwebtoken')
+const { Auth } = require("../models")
+const { createTransport } = require("nodemailer")
+const ErrorResponse = require("../utils/ErrorResponse");
+const crypto = require("crypto");
+
+const JWT_SECRET = process.env.JWT_SECRET
+
+const transport = createTransport({
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    auth: {
+        user:process.env.USER_SMTP,
+        pass: process.env.BREVO_SMTP_KEY
+    }
+})
+
+const generateToken = async (user_id) => {
+    const user = await Auth.findOne({ _id: user_id });
+    if (!user) throw new ErrorResponse("User not found", 404);
+
+    const date = new Date();
+    if (!user.resetToken.token || user.resetToken.expiry <= date) {
+        const buffer = crypto.randomBytes(32);
+        const token = buffer.toString("hex");
+        const date = new Date();
+        date.setDate(date.getDate() + 1);
+        await Auth.findOneAndUpdate(
+            { _id: user_id },
+            {
+                resetToken: {
+                    token,
+                    expiry: date,
+                },
+            }
+        );
+        return token;
+    }
+
+    return user.resetToken.token;
+};
+
+/**
+ * Creates a new user account.
+ * @param {Object} body - The request body containing user details.
+ * @returns {Promise<Auth>} - The created Auth user object.
+ * @throws {ErrorResponse} - If the email or telephone is already taken.
+ */
+
+const createAccount = async (body) => {
+    const data = { ...body }
+
+    if (await Auth.isEmailTaken(data.email)) {
+        throw new ErrorResponse("Email Already Taken", 400);
+    }
+
+    if (await Auth.isTelephoneTaken(data.telephone)) {
+        throw new ErrorResponse("Phone Number Already Taken", 400);
+    }
+
+    const user = await Auth.create(data);
+    return user
+}
+
+/**
+ * Creates a new user account.
+ * @param {Object} body - The request body containing user details.
+ * @returns {Promise<Admin>} - The created Admin user object.
+ * @throws {ErrorResponse} - If the email or telephone is already taken.
+ */
+
+const newRegister = async (body) => {
+    const data = { ...body }
+    
+    if (await Auth.isEmailTaken(data.email)) {
+        throw new ErrorResponse("Email Already Taken", 400);
+    }
+
+    const user = await Auth.create({ ...data, active: false });
+    return user
+}
+
+/**
+ * Authenticates a user using email and password.
+ * @param {string} email - The email address of the user.
+ * @param {string} password - The password of the user.
+ * @returns {Promise<Object>} - An object containing the authentication status, user data, and JWT token with expiry date.
+ * @throws {ErrorResponse} - If JWT_SECRET is not set, the email is not found, or the password is incorrect.
+ */
+
+const loginWithEmailAndPass = async (email, password) => {
+    if (!JWT_SECRET) throw new ErrorResponse("JWT_SECRET not set", 500);
+
+    const user = await Auth.findOne({ email })
+    if (!user) {
+        throw new ErrorResponse("Email not found")
+    }
+
+    if (!(await user.isPasswordMatch(password))) {
+        throw new ErrorResponse("Password is incorrect", 400)
+    }
+
+    const token = jwt.sign({
+        name: user.name,
+        email: user.email,
+        user_id: user._id,
+    },
+        JWT_SECRET, {
+        expiresIn: 60 * 60 * 24 * 7, // in 7 days
+    }
+    )
+
+    let date = new Date();
+    date.setDate(date.getDate() + 6);
+    delete user.password;
+    return {
+        success: true,
+        data: user,
+        jwt: { token, expiry: date.toISOString() }
+    }
+}
+
+/**
+ * Initiates the password reset process for a user by email.
+ * @param {string} email - The email address of the user requesting a password reset.
+ * @returns {Promise<string>} - A message indicating that the reset password email has been sent.
+ * @throws {ErrorResponse} - If the user with the provided email is not found.
+ */
+const forgetPassword = async (email) => {
+    const user = await Auth.findOne({ email })
+    if (!user) throw new ErrorResponse("User not found", 404);
+
+    // console.log(email, process.env.EMAIL_SENDER)
+    const token = await generateToken(user._id)
+
+    let url = `${process.env.ADMIN_URL}/reset-password?token=${token}`
+    const mainOptions = {
+        from: "durgeshchaudhary020401@gmail.com",
+        to: email,
+        subject: "Reset Your Password",
+        text: url
+    }
+
+    await transport.sendMail(mainOptions, function (error, info) {
+        if (error) {
+            console.log(error)
+            throw new ErrorResponse(error, 500)
+        } else {
+            console.log(info.response)
+        }
+    })
+    return "Reset password email sended successfully"
+}
+
+/**
+ * Resets the user's password using the provided token and new password.
+ * @param {string} token - The password reset token.
+ * @param {string} newPassword - The new password to set for the user.
+ * @returns {Promise<string>} - A message indicating that the password has been successfully changed.
+ * @throws {ErrorResponse} - If the token is invalid, expired, or if the new password matches the old one.
+ */
+
+const resetPassword = async (token, newPassword) => {
+    const user = await Auth.findOne({
+        "resetToken.token": token,
+        "resetToken.expiry": { $gt: new Date() },
+    });
+
+    if (!user)
+        throw new ErrorResponse("Invalid Token or Token Expired", 400);
+
+    if (await user.isPasswordMatch(newPassword)) {
+        throw new ErrorResponse("New Password can't be same as previous password", 400);
+    }
+
+    await user.changePassword(newPassword)
+
+    await Auth.findOneAndUpdate(
+        { email: user.email },
+        { resetToken: { token: null, expiry: null } }
+    )
+
+    return "Password Changed Successfully"
+}
+
+/**
+ * Updates the profile of a user by their userId.
+ * @param {Object} profile - The updated profile data to be set.
+ * @param {String} userId - The unique ID of the user whose profile is being updated.
+ * @returns {Object} - The updated user profile object.
+ * @throws {ErrorResponse} - Throws an error if the user is not found.
+ */
+
+const updateProfile = async (profile, userId) => {
+    const updatePro = await Auth.findByIdAndUpdate(
+        { _id: userId },              // Match the user by ID
+        { $set: { ...profile } },             // Update profile using $set
+        { new: true, runValidators: true }
+    )
+
+    // Check if the user was found and updated
+    if (!updatePro) {
+        throw new ErrorResponse("User not found", 404);
+    }
+
+    return updatePro;
+}
+
+module.exports = {
+    createAccount,
+    loginWithEmailAndPass,
+    forgetPassword,
+    resetPassword,
+    updateProfile,
+    newRegister
+}
