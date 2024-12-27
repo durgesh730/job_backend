@@ -9,7 +9,7 @@ const { jobApplicant } = require("../models");
 
 const saveApplicants = async (body) => {
     const data = { ...body }
-
+    
     if (!data.email) {
         throw new ErrorResponse("Email not Found", 404);
     }

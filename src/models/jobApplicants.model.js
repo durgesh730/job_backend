@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const jobApplicantSchema = new mongoose.Schema({
     jobId: {
         type: mongoose.Types.ObjectId,
-        unique: true,
+        unique: false,
         required: true,
     },
     name: {
