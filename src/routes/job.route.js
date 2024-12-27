@@ -11,7 +11,7 @@ router
     .delete(JobController.deleteJob)
 
 router
-    .route("/all_jobs")
+    .route("/http://localhost:5000/api/v1/admin/job/create_job")
     .get(JobController.getAllJob)
 
 module.exports = router

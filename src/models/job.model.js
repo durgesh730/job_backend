@@ -1,12 +1,12 @@
 const mongoose = require("mongoose")
 
 const jobSchema = new mongoose.Schema({
-    // jobTitle: {
-    //     type: String,
-    //     trim: true,
-    //     required: [true, "Please provide a Job Title"],
-    //     default: null,
-    // },
+    jobTitle: {
+        type: String,
+        trim: true,
+        required: [true, "Please provide a Job Title"],
+        default: null,
+    },
     // jobLocation: {
     //     type: String,
     //     trim: true,
@@ -49,7 +49,7 @@ const jobSchema = new mongoose.Schema({
     //     required: false,
     //     default: null,
     // },
-    details: {
+    jobDescription: {
         type: String,
         required: true,
         default: null,
