@@ -29,7 +29,7 @@ defaultRoutes.forEach((route) => {
 })
 
 //Auth route
-router.use(apiAuthMiddleware);
+// router.use(apiAuthMiddleware);
 
 authRoutes.forEach((route) => {
     router.use(route.path, route.route)

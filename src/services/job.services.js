@@ -1,5 +1,6 @@
 const asyncHandler = require("../middleware/asyncHandler");
 const { Job } = require("../models");
+const ErrorResponse = require("../utils/ErrorResponse");
 
 /**
  * Service to create a new job.
@@ -8,9 +9,9 @@ const { Job } = require("../models");
  */
 const createJob = asyncHandler(async (data) => {
 
-    // if (!data.jobTitle) {
-    //     throw new ErrorResponse("Title not Found", 404);
-    // }
+    if (!data.jobTitle) {
+        throw new ErrorResponse("Title not Found", 404);
+    }
 
     // if (!data.skill) {
     //     throw new ErrorResponse("Skill not Found", 404);
