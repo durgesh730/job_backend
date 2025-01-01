@@ -1,13 +1,12 @@
 const jwt = require('jsonwebtoken')
-const { Auth } = require("../models")
-const ErrorResponse = require("../utils/ErrorResponse");
 const crypto = require("crypto");
-const { transport } = require("../helpers/emailTransport")
+const ErrorResponse = require("../../utils/ErrorResponse");
+const { inventoryAuth } = require('../../models');
 
 const JWT_SECRET = process.env.JWT_SECRET
 
 const generateToken = async (user_id) => {
-    const user = await Auth.findOne({ _id: user_id });
+    const user = await inventoryAuth.findOne({ _id: user_id });
     if (!user) throw new ErrorResponse("User not found", 404);
 
     const date = new Date();
@@ -16,7 +15,7 @@ const generateToken = async (user_id) => {
         const token = buffer.toString("hex");
         const date = new Date();
         date.setDate(date.getDate() + 1);
-        await Auth.findOneAndUpdate(
+        await inventoryAuth.findOneAndUpdate(
             { _id: user_id },
             {
                 resetToken: {
@@ -34,22 +33,22 @@ const generateToken = async (user_id) => {
 /**
  * Creates a new user account.
  * @param {Object} body - The request body containing user details.
- * @returns {Promise<Auth>} - The created Auth user object.
+ * @returns {Promise<inventoryAuth>} - The created inventoryAuth user object.
  * @throws {ErrorResponse} - If the email or telephone is already taken.
  */
 
 const createAccount = async (body) => {
     const data = { ...body }
 
-    if (await Auth.isEmailTaken(data.email)) {
+    if (await inventoryAuth.isEmailTaken(data.email)) {
         throw new ErrorResponse("Email Already Taken", 400);
     }
 
-    if (await Auth.isTelephoneTaken(data.telephone)) {
+    if (await inventoryAuth.isTelephoneTaken(data.telephone)) {
         throw new ErrorResponse("Phone Number Already Taken", 400);
     }
 
-    const user = await Auth.create(data);
+    const user = await inventoryAuth.create(data);
     return user
 }
 
@@ -63,26 +62,26 @@ const createAccount = async (body) => {
 const newRegister = async (body) => {
     const data = { ...body }
 
-    if (await Auth.isEmailTaken(data.email)) {
+    if (await inventoryAuth.isEmailTaken(data.email)) {
         throw new ErrorResponse("Email Already Taken", 400);
     }
 
-    const user = await Auth.create({ ...data, active: false });
+    const user = await inventoryAuth.create({ ...data, active: false });
     return user
 }
 
 /**
- * Authenticates a user using email and password.
+ * inventoryAuthenticates a user using email and password.
  * @param {string} email - The email address of the user.
  * @param {string} password - The password of the user.
- * @returns {Promise<Object>} - An object containing the authentication status, user data, and JWT token with expiry date.
+ * @returns {Promise<Object>} - An object containing the inventoryAuthentication status, user data, and JWT token with expiry date.
  * @throws {ErrorResponse} - If JWT_SECRET is not set, the email is not found, or the password is incorrect.
  */
 
 const loginWithEmailAndPass = async (email, password) => {
     if (!JWT_SECRET) throw new ErrorResponse("JWT_SECRET not set", 500);
 
-    const user = await Auth.findOne({ email })
+    const user = await inventoryAuth.findOne({ email })
     if (!user) {
         throw new ErrorResponse("Email not found")
     }
@@ -118,7 +117,7 @@ const loginWithEmailAndPass = async (email, password) => {
  * @throws {ErrorResponse} - If the user with the provided email is not found.
  */
 const forgetPassword = async (email) => {
-    const user = await Auth.findOne({ email })
+    const user = await inventoryAuth.findOne({ email })
     if (!user) throw new ErrorResponse("User not found", 404);
 
     // console.log(email, process.env.EMAIL_SENDER)
@@ -152,7 +151,7 @@ const forgetPassword = async (email) => {
  */
 
 const resetPassword = async (token, newPassword) => {
-    const user = await Auth.findOne({
+    const user = await inventoryAuth.findOne({
         "resetToken.token": token,
         "resetToken.expiry": { $gt: new Date() },
     });
@@ -166,7 +165,7 @@ const resetPassword = async (token, newPassword) => {
 
     await user.changePassword(newPassword)
 
-    await Auth.findOneAndUpdate(
+    await inventoryAuth.findOneAndUpdate(
         { email: user.email },
         { resetToken: { token: null, expiry: null } }
     )
@@ -183,7 +182,7 @@ const resetPassword = async (token, newPassword) => {
  */
 
 const updateProfile = async (profile, userId) => {
-    const updatePro = await Auth.findByIdAndUpdate(
+    const updatePro = await inventoryAuth.findByIdAndUpdate(
         { _id: userId },              // Match the user by ID
         { $set: { ...profile } },             // Update profile using $set
         { new: true, runValidators: true }

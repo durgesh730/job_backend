@@ -1,8 +1,9 @@
 const express = require("express")
 const router = express.Router()
 const auth = require('./auth.route')
-const job = require('./job.route') 
-const applicant = require('./jobApplicant.route') 
+const job = require('./job.route')
+const applicant = require('./jobApplicant.route')
+const inventory = require('./inventory')
 const apiAuthMiddleware = require('../middleware/Api-auth.middleware').auth;
 
 const defaultRoutes = [
@@ -13,6 +14,10 @@ const defaultRoutes = [
     {
         path: "/job/applicant",
         route: applicant
+    },
+    {
+        path: "/inventory",
+        route: inventory
     },
 ]
 
