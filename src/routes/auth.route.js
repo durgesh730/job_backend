@@ -3,7 +3,7 @@ const router = express.Router()
 const validate = require("../middleware/validate")
 const { AuthController } = require("../controllers")
 const { AuthValidation } = require("../validations")
-const { auth } = require("../middleware/Api-auth.middleware")
+const { authMiddleware } = require("../middleware/Api-auth.middleware")
 
 router
     .route("/register")
@@ -27,24 +27,24 @@ router
 
 router
     .route("/valid_user")
-    .get(auth, AuthController.validateAuth)
+    .get(authMiddleware("auth"), AuthController.validateAuth)
 
 router
     .route("/update_profile")
-    .put(auth, validate(AuthValidation.updateProfile),
+    .put(authMiddleware("auth"), validate(AuthValidation.updateProfile),
         AuthController.updateProfile)
 
 router
     .route("/get_all_users")
-    .get(auth, AuthController.getAllUsers)
+    .get(authMiddleware("auth"), AuthController.getAllUsers)
 
 router
     .route("/create_account")
-    .post(auth, validate(AuthValidation.createAccount),
+    .post(authMiddleware("auth"), validate(AuthValidation.createAccount),
         AuthController.createAccount)
 
 router
     .route("/delete_account/:id")
-    .delete(auth, AuthController.deleteAccount)
+    .delete(authMiddleware("auth"), AuthController.deleteAccount)
 
 module.exports = router

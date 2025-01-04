@@ -1,7 +1,7 @@
 const ErrorResponse = require("../../utils/ErrorResponse");
 const asyncHandler = require("../../middleware/asyncHandler");
 const { InventoryAuthServices } = require("../../services");
-const { inventoryAuth } = require("../../models");
+const { InventoryAuth } = require("../../models");
 
 /**
  * This function is used to create a new user account.
@@ -88,12 +88,13 @@ const resetPassword = asyncHandler(async (req, res) => {
  * @returns {Object} - JSON response containing the Auth's details.
  */
 const validateAuth = asyncHandler(async (req, res) => {
-    const userId = req.user_detail._id;
+    const userId = req.user_detail;
+    console.log(userId)
     if (!userId) {
         throw new ErrorResponse("User Not Found", 400)
     }
 
-    const data = await inventoryAuth.findById(userId).select('-password -resetToken -emailVerified')
+    const data = await InventoryAuth.findById(userId).select('-password -resetToken -emailVerified')
     return res.status(200).json({ success: true, data });
 })
 
@@ -130,13 +131,13 @@ const getAllUsers = asyncHandler(async (req, res) => {
     // Calculate the number of documents to skip
     const skip = (page - 1) * limit;
 
-    const users = await inventoryAuth.find({
+    const users = await InventoryAuth.find({
         _id: { $ne: userId }
     })
         .select('-password -resetToken')
         .skip(skip)
         .limit(limit)
-    const totalItems = await inventoryAuth.countDocuments();
+    const totalItems = await InventoryAuth.countDocuments();
 
     return res.status(200).json({
         success: true,
@@ -160,7 +161,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
     if (!id) {
         throw new ErrorResponse("Account Id Required", 400)
     }
-    const data = await inventoryAuth.findByIdAndDelete(id)
+    const data = await InventoryAuth.findByIdAndDelete(id)
     return res.status(200).json({
         success: true,
         data,

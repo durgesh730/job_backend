@@ -15,6 +15,10 @@ const cors = require("cors")
 app.use(cors())
 app.use(express.json())
 
+//<------------------------- logging with morgan ------------------------>
+const morgan = require("morgan");
+app.use(morgan('dev'));
+
 //<---------------------------- main route setup ------------------------>
 app.use("/api/v1", require('./src/routes'));
 app.get('/', (req, res) => res.status(200).send("Hello World !"))

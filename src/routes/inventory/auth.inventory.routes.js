@@ -3,7 +3,7 @@ const router = express.Router()
 const validate = require("../../middleware/validate")
 const { InventoryAuthController } = require("../../controllers")
 const { AuthValidation } = require("../../validations")
-const { auth } = require("../../middleware/Api-auth.middleware")
+const { authMiddleware } = require("../../middleware/Api-auth.middleware")
 
 router
     .route("/register")
@@ -27,24 +27,24 @@ router
 
 router
     .route("/valid_user")
-    .get(auth, InventoryAuthController.validateAuth)
+    .get(authMiddleware("inventory"), InventoryAuthController.validateAuth)
 
 router
     .route("/update_profile")
-    .put(auth, validate(AuthValidation.updateProfile),
+    .put(authMiddleware("inventory"), validate(AuthValidation.updateProfile),
         InventoryAuthController.updateProfile)
 
 router
     .route("/get_all_users")
-    .get(auth, InventoryAuthController.getAllUsers)
+    .get(authMiddleware("inventory"), InventoryAuthController.getAllUsers)
 
 router
     .route("/create_account")
-    .post(auth, validate(AuthValidation.createAccount),
+    .post(authMiddleware("inventory"), validate(AuthValidation.createAccount),
         InventoryAuthController.createAccount)
 
 router
     .route("/delete_account/:id")
-    .delete(auth, InventoryAuthController.deleteAccount)
+    .delete(authMiddleware("inventory"), InventoryAuthController.deleteAccount)
 
 module.exports = router
