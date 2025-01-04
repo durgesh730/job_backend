@@ -89,7 +89,6 @@ const resetPassword = asyncHandler(async (req, res) => {
  */
 const validateAuth = asyncHandler(async (req, res) => {
     const userId = req.user_detail;
-    console.log(userId)
     if (!userId) {
         throw new ErrorResponse("User Not Found", 400)
     }
