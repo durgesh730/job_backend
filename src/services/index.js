@@ -4,3 +4,4 @@ module.exports.JobServices = require('./job.services')
 
 
 module.exports.InventoryAuthServices = require('./inventory/auth.inventory.service')
+module.exports.UserManagementServices = require('./inventory/userManagement.service')
