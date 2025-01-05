@@ -39,7 +39,7 @@ const createApplicant = {
             .messages({
                 "string.base": "Comment must be a string",
             }),
-        attachment: Joi.string()
+        attachment: Joi.any()
             .required()
             .messages({
                 "any.required": "Attachment is required",

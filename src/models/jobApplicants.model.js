@@ -35,7 +35,7 @@ const jobApplicantSchema = new mongoose.Schema({
         default: null,
     },
     attachment: {
-        type: String,
+        type: Object,
         required: true
     }
 },

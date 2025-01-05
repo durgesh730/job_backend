@@ -10,7 +10,14 @@ const asyncHandler = require("../middleware/asyncHandler");
  * @returns {Object} - Returns the created user object.
  */
 const saveApplicants = asyncHandler(async (req, res) => {
-    const user = await ApplicantServices.saveApplicants(req.body);
+    const { body, file } = req;
+
+    // Merge file information into body if necessary
+    if (file) {
+        body.attachment = file;
+    }
+
+    const user = await ApplicantServices.saveApplicants(body);
     return res.status(201).json({
         success: true,
         data: user,
