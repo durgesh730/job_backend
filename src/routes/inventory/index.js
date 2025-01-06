@@ -1,12 +1,17 @@
 const express = require("express")
 const router = express.Router()
 const auth = require('./auth.inventory.routes')
+const user = require('./userMangement.route')
 const apiAuthMiddleware = require('../../middleware/Api-auth.middleware').auth;
 
 const defaultRoutes = [
     {
         path: "/auth",
         route: auth
+    },
+    {
+        path: "/user",
+        route: user
     },
 ]
 

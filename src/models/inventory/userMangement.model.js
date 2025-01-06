@@ -36,6 +36,19 @@ const userMangementSchema = new mongoose.Schema({
     { timestamps: true }
 );
 
+userMangementSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+    const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+    return !!user; // return true if user is not null
+};
+
+userMangementSchema.statics.isTelephoneTaken = async function (
+    telephone,
+    excludeUserId
+) {
+    const user = await this.findOne({ telephone, _id: { $ne: excludeUserId } });
+    return !!user; // return true if user is not null
+};
+
 const userMangementModel = mongoose.model("userMangement", userMangementSchema);
 
 module.exports = userMangementModel;

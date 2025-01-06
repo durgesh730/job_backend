@@ -26,7 +26,7 @@ const createAccount = asyncHandler(async (req, res) => {
  */
 
 const updateProfile = asyncHandler(async (req, res) => {
-    const userId = req.user_detail._id;
+    const userId = req.params.id;
     const data = await UserManagementServices.updateProfile(req.body, userId)
     return res.status(200).json({
         success: true,
