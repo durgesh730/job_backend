@@ -1,5 +1,5 @@
+const asyncHandler = require('../../middleware/asyncHandler');
 const { InvoiceService } = require('../../services');
-const asyncHandler = require('../middlewares/asyncHandler');
 
 /**
  * Creates a new invoice.

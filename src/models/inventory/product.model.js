@@ -1,106 +1,89 @@
 const mongoose = require("mongoose");
 
-const invoiceSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
     createBy: {
         required: false,
         type: mongoose.Schema.ObjectId
     },
-    billTo: {
-        required: false,
-        type: mongoose.Schema.ObjectId
-    },
-    shipTo: {
-        required: false,
-        type: mongoose.Schema.ObjectId
-    },
-    invoiceDate: {
-        type: Date,
-        trim: true,
-        required: false,
-        default: null,
-    },
-    dueDate: {
-        type: Date,
-        trim: true,
-        required: false,
-        default: null,
-    },
-    shipByDate: {
-        type: Date,
-        trim: true,
-        required: false,
-        default: null,
-    },
-    customerOrderNo: {
+    number: {
         type: String,
         trim: true,
         required: false,
         default: null,
     },
-    tallyBill: {
+    productName: {
         type: String,
         trim: true,
         required: false,
         default: null,
     },
-    trackingId: {
+    category: {
         type: String,
         trim: true,
         required: false,
         default: null,
     },
-    shippingOrDate: {
+    availableStock: {
         type: String,
         trim: true,
         required: false,
         default: null,
     },
-    salesPerson: {
+    status: {
         type: String,
         trim: true,
         required: false,
         default: null,
     },
-    source: {
+    reorderLevel: {
         type: String,
         trim: true,
         required: false,
         default: null,
     },
-    product: {
+    reorderQty: {
+        type: String,
+        trim: true,
+        required: false,
+        default: null,
+    },
+    incommingOutgoing: {
+        type: String,
+        trim: true,
+        required: false,
+        default: null,
+    },
+    description: {
         type: Array,
         trim: true,
         required: true,
     },
-    attachedFile: {
+    UOM: {
         type: String,
         trim: true,
         required: false,
     },
-    total: {
+    transactionType: {
         type: String,
         required: false,
     },
-    subTotal: {
+    barcode: {
         type: String,
         required: false,
     },
-    totalDiscount: {
+    restockLevel: {
         type: String,
         required: false,
     },
-    tax: {
+    restockBuildQuantity: {
         type: String,
         required: false,
-    },
-    active: {
-        type: Boolean,
-        default: true
     },
 },
     { timestamps: true }
 );
 
-const invoiceModel = mongoose.model("invoice", invoiceSchema);
+const productModel = mongoose.model("product", productSchema);
 
-module.exports = invoiceModel;
+module.exports = productModel;
+

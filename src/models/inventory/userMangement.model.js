@@ -28,6 +28,52 @@ const userMangementSchema = new mongoose.Schema({
         trim: true,
         unique: false,
     },
+    address: {
+        contactName: {
+            type: String,
+            required: false
+        },
+        addressOne: {
+            type: String,
+            required: false
+        },
+        addressTwo: {
+            type: String,
+            required: false
+        },
+        city: {
+            type: String,
+            required: false
+        },
+        postalCode: {
+            type: String,
+            required: false
+        },
+        state: {
+            type: String,
+            required: false
+        },
+        country: {
+            type: String,
+            required: false
+        },
+        phone: {
+            type: String,
+            required: [false, "Please provide telephone Number"],
+            trim: true,
+            unique: false,
+        },
+        email: {
+            type: String,
+            match: [
+                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                "Please provide a valid email address",
+            ],
+            unique: true,
+            lowercase: true,
+            required: [false, "Please provide a email address"],
+        },
+    },
     active: {
         type: Boolean,
         default: true

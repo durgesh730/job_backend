@@ -4,3 +4,5 @@ module.exports.ApplicantController = require("./jobApplicant.controllor")
 
 module.exports.InventoryAuthController = require("./inventory/auth.inventory.controllor")
 module.exports.UserManagementController = require("./inventory/userManagement.controllor")
+module.exports.InvoiceController = require("./inventory/invoice.controllor")
+module.exports.ProductController = require("./inventory/product.controllor")
