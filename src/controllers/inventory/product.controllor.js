@@ -13,12 +13,21 @@ const createProduct = async (req, res) => {
 // Get All Products
 const getAllProducts = async (req, res) => {
     try {
-        const products = await ProductService.getAllProducts();
-        res.status(200).json({ products });
+        const products = await ProductService.getAllProducts(req.query);
+        res.status(200).json({
+            success: true,
+            msg: "Data fetched successfully",
+            data: products,
+        });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching products", error: error.message });
+        res.status(500).json({
+            success: false,
+            message: "Error fetching products",
+            error: error.message,
+        });
     }
 };
+
 
 // Get Product by ID
 const getProductById = async (req, res) => {

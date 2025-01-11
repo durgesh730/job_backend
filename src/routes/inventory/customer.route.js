@@ -2,29 +2,29 @@ const express = require("express")
 const router = express.Router()
 const validate = require("../../middleware/validate")
 const { InventoryValidation } = require("../../validations")
-const { UserManagementController } = require("../../controllers")
+const { CustomerController } = require("../../controllers")
 const { authMiddleware } = require("../../middleware/Api-auth.middleware")
 
 router
     .route("/create_user")
     .post(authMiddleware("inventory"),
         validate(InventoryValidation.createAccount),
-        UserManagementController.createAccount)
+        CustomerController.createAccount)
 
 router
     .route("/update_user/:id")
     .put(authMiddleware("inventory"),
         validate(InventoryValidation.createAccount),
-        UserManagementController.updateProfile)
+        CustomerController.updateProfile)
 
 router
     .route("/get_all_user")
     .get(authMiddleware("inventory"),
-        UserManagementController.getAllUser)
+        CustomerController.getAllUser)
 
 router
     .route("/delete_user/:id")
     .delete(authMiddleware("inventory"),
-        UserManagementController.deleteUser)
+        CustomerController.deleteUser)
 
 module.exports = router

@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const auth = require('./auth.inventory.routes')
 const product = require('./product.routes')
-const user = require('./userMangement.route')
+const customer = require('./customer.route')
 const invoice = require('./invoice.routes')
 const { authMiddleware } = require("../../middleware/Api-auth.middleware")
 
@@ -19,8 +19,8 @@ const authRoutes = [
         route: invoice
     },
     {
-        path: "/user",
-        route: user
+        path: "/customer",
+        route: customer
     },
     {
         path: "/product",

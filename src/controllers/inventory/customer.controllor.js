@@ -1,7 +1,7 @@
 const ErrorResponse = require("../../utils/ErrorResponse");
 const asyncHandler = require("../../middleware/asyncHandler");
-const { UserManagementServices } = require("../../services");
-const { UserMangement } = require("../../models");
+const { CustomerServices } = require("../../services");
+const { Customer } = require("../../models");
 
 /**
  * This function is used to create a new user account.
@@ -10,7 +10,7 @@ const { UserMangement } = require("../../models");
  * @returns {Object} - Returns the created user object.
  */
 const createAccount = asyncHandler(async (req, res) => {
-    const user = await UserManagementServices.createAccount(req.body);
+    const user = await CustomerServices.createAccount(req.body);
     return res.status(201).json({
         success: true,
         data: user,
@@ -27,7 +27,7 @@ const createAccount = asyncHandler(async (req, res) => {
 
 const updateProfile = asyncHandler(async (req, res) => {
     const userId = req.params.id;
-    const data = await UserManagementServices.updateProfile(req.body, userId)
+    const data = await CustomerServices.updateProfile(req.body, userId)
     return res.status(200).json({
         success: true,
         data,
@@ -42,7 +42,7 @@ const updateProfile = asyncHandler(async (req, res) => {
  * @returns {Object} - Returns the created user object.
  */
 const getAllUser = asyncHandler(async (req, res) => {
-    const user = await UserMangement.find();
+    const user = await Customer.find();
     return res.status(201).json({
         success: true,
         data: user,
@@ -62,7 +62,7 @@ const deleteUser = asyncHandler(async (req, res) => {
     if (!id) {
         throw new ErrorResponse("Account Id Required", 400)
     }
-    const data = await UserMangement.findByIdAndDelete(id)
+    const data = await Customer.findByIdAndDelete(id)
     return res.status(200).json({
         success: true,
         data,
