@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const crypto = require("crypto");
 const ErrorResponse = require("../../utils/ErrorResponse");
 const { InventoryAuth } = require('../../models');
+const { validatePhoneNumber } = require('../../validations/auth.validation');
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -40,16 +41,20 @@ const generateToken = async (user_id) => {
 const createAccount = async (body) => {
     const data = { ...body }
 
-    if (await InventoryAuth.isEmailTaken(data.email)) {
+    if (!validatePhoneNumber(data.telephone)) {
+        throw new ErrorResponse("Enter Valid Phone Number", 400);
+    }
+    else if (!data.role) {
+        throw new ErrorResponse("Role Required", 400);
+    }
+    else if (await InventoryAuth.isEmailTaken(data.email)) {
         throw new ErrorResponse("Email Already Taken", 400);
     }
-
-    if (await InventoryAuth.isTelephoneTaken(data.telephone)) {
+    else if (await InventoryAuth.isTelephoneTaken(data.telephone)) {
         throw new ErrorResponse("Phone Number Already Taken", 400);
     }
 
-    const user = await InventoryAuth.create(data);
-    return user
+    return await InventoryAuth.create(data);
 }
 
 /**

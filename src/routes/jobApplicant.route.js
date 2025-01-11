@@ -1,9 +1,8 @@
 const express = require("express")
 const router = express.Router()
-const validate = require("../middleware/validate")
 const { ApplicantController } = require("../controllers")
-const { AuthValidation, JobValidation } = require("../validations")
 const { authMiddleware } = require("../middleware/Api-auth.middleware")
+
 const multer = require("multer");
 const upload = multer({
     limits: 50000,

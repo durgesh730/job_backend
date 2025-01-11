@@ -17,11 +17,15 @@ app.use(express.json())
 
 //<------------------------- logging with morgan ------------------------>
 const morgan = require("morgan");
+const errorHandler = require("./src/middleware/errorHandler.middleware");
 app.use(morgan('dev'));
 
 //<---------------------------- main route setup ------------------------>
 app.use("/api/v1", require('./src/routes'));
 app.get('/', (req, res) => res.status(200).send("Hello World !"))
+
+app.use(errorHandler);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on Port: ${PORT}`);

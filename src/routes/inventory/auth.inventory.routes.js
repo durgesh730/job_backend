@@ -11,6 +11,12 @@ router
         InventoryAuthController.newRegister)
 
 router
+    .route("/create_account")
+    .post(authMiddleware("inventory"), validate(AuthValidation.createAccount),
+        InventoryAuthController.createAccount)
+
+
+router
     .route("/login")
     .post(validate(AuthValidation.login),
         InventoryAuthController.loginWithEmailAndPass)
@@ -30,7 +36,7 @@ router
     .get(authMiddleware("inventory"), InventoryAuthController.validateAuth)
 
 router
-    .route("/update_profile")
+    .route("/update_profile/:id")
     .put(authMiddleware("inventory"), validate(AuthValidation.updateProfile),
         InventoryAuthController.updateProfile)
 
@@ -38,10 +44,6 @@ router
     .route("/get_all_users")
     .get(authMiddleware("inventory"), InventoryAuthController.getAllUsers)
 
-router
-    .route("/create_account")
-    .post(authMiddleware("inventory"), validate(AuthValidation.createAccount),
-        InventoryAuthController.createAccount)
 
 router
     .route("/delete_account/:id")

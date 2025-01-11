@@ -42,6 +42,11 @@ const inventoryAuthSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    role: {
+        type: String,
+        default: null,
+        required: true
+    },
     resetToken: {
         token: {
             type: String,

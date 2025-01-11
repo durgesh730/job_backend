@@ -47,10 +47,11 @@ const validatePhoneNumber = (input_str) => {
 
 const createAccount = {
     body: Joi.object().keys({
-        email: Joi.string().email().required(),
-        password: Joi.string().required(),
-        telephone: Joi.string().optional(),
         name: Joi.string().optional(),
+        email: Joi.string().email().required(),
+        telephone: Joi.string().optional(),
+        password: Joi.string().required(),
+        role: Joi.string().required()
     })
 }
 
@@ -63,9 +64,10 @@ const login = {
 
 const newRegister = {
     body: Joi.object().keys({
+        name: Joi.string().optional(),
         email: Joi.string().required(),
         password: Joi.string().required(),
-        name: Joi.string().optional(),
+        role: Joi.string().required()
     })
 }
 
@@ -86,12 +88,10 @@ const resetPassword = {
 
 const updateProfile = {
     body: Joi.object().keys({
-        email: Joi.string().required(),
         name: Joi.string().optional(),
+        email: Joi.string().required(),
         telephone: Joi.string().optional(),
-        country: Joi.string().optional(),
-        address: Joi.string().optional(),
-        profile_image: Joi.string().optional(),
+        role: Joi.string().required()
     }),
 }
 
