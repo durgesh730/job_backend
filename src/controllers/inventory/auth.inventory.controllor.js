@@ -10,7 +10,6 @@ const { InventoryAuth } = require("../../models");
  * @returns {Object} - Returns the created user object.
  */
 const createAccount = asyncHandler(async (req, res) => {
-    console.log("re ", req.body)
     const user = await InventoryAuthServices.createAccount(req.body);
     return res.status(201).json({
         success: true,
@@ -125,32 +124,27 @@ const updateProfile = asyncHandler(async (req, res) => {
 const getAllUsers = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const query = req.query.query?.trim(); // Search query (optional)
+    const query = req.query.query?.trim();
 
-    // Calculate the number of documents to skip
     const skip = (page - 1) * limit;
 
-    // Define the search condition
     const searchCondition = query
         ? {
             $or: [
-                { name: { $regex: query, $options: "i" } }, // Case-insensitive match for name
-                { email: { $regex: query, $options: "i" } }, // Case-insensitive match for email
-                { telephone: { $regex: query, $options: "i" } }, // Partial match for telephone
+                { name: { $regex: query, $options: "i" } },
+                { email: { $regex: query, $options: "i" } },
+                { telephone: { $regex: query, $options: "i" } },
             ],
         }
-        : {}; // Empty condition when no query is provided
+        : {};
 
-    // Fetch users based on the search condition and pagination
     const users = await InventoryAuth.find(searchCondition)
-        .select("-password -resetToken") // Exclude sensitive fields
+        .select("-password -resetToken")
         .skip(skip)
         .limit(limit);
 
-    // Count total items based on the search condition
     const totalItems = await InventoryAuth.countDocuments(searchCondition);
 
-    // Return response
     return res.status(200).json({
         success: true,
         data: users,

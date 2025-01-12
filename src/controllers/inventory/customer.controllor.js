@@ -42,11 +42,35 @@ const updateProfile = asyncHandler(async (req, res) => {
  * @returns {Object} - Returns the created user object.
  */
 const getAllUser = asyncHandler(async (req, res) => {
-    const user = await Customer.find();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const query = req.query.query?.trim();
+
+    const skip = (page - 1) * limit;
+
+    const searchCondition = query
+        ? {
+            $or: [
+                { customerName: { $regex: query, $options: "i" } },
+            ],
+        }
+        : {};
+
+    const users = await Customer.find(searchCondition)
+        .select("-password -resetToken")
+        .skip(skip)
+        .limit(limit);
+
+    const totalItems = await Customer.countDocuments(searchCondition);
+
     return res.status(201).json({
+        msg: "Job Fetched successfully",
         success: true,
-        data: user,
-        msg: "Job Fetched successfully"
+        data: users,
+        currentPage: page,
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems: totalItems,
+        limit,
     });
 });
 
