@@ -7,8 +7,8 @@ const { Invoice } = require('../../models');
  * @returns {Object} - The created invoice object.
  * @throws {Error} - Throws an error if the invoice creation fails.
  */
-const createInvoice = asyncHandler(async (invoiceData) => {
-    const invoice = new Invoice(invoiceData);
+const createInvoice = asyncHandler(async (invoiceData, id) => {
+    const invoice = new Invoice({ ...invoiceData, createBy: id });
     return await invoice.save();
 });
 

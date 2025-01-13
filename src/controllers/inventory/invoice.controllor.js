@@ -8,9 +8,10 @@ const { InvoiceService } = require('../../services');
  * @returns {Object} - JSON response with the created invoice data.
  */
 const createInvoice = asyncHandler(async (req, res) => {
-    const invoiceData = req.body;
-    const invoice = await InvoiceService.createInvoice(invoiceData);
-    res.status(201).json({
+    const invoiceData = req.body
+    const userId = req.user_detail?._id
+    const invoice = await InvoiceService.createInvoice(invoiceData, userId);
+    return res.status(201).json({
         success: true,
         message: 'Invoice created successfully',
         data: invoice,
@@ -25,7 +26,7 @@ const createInvoice = asyncHandler(async (req, res) => {
  */
 const getInvoices = asyncHandler(async (req, res) => {
     const invoices = await InvoiceService.getInvoices();
-    res.status(200).json({
+    return res.status(200).json({
         success: true,
         data: invoices,
     });
@@ -46,7 +47,7 @@ const getInvoiceById = asyncHandler(async (req, res) => {
             message: 'Invoice not found',
         });
     }
-    res.status(200).json({
+    return res.status(200).json({
         success: true,
         data: invoice,
     });
@@ -68,7 +69,7 @@ const updateInvoice = asyncHandler(async (req, res) => {
             message: 'Invoice not found',
         });
     }
-    res.status(200).json({
+    return res.status(200).json({
         success: true,
         message: 'Invoice updated successfully',
         data: updatedInvoice,
@@ -90,7 +91,7 @@ const deleteInvoice = asyncHandler(async (req, res) => {
             message: 'Invoice not found',
         });
     }
-    res.status(200).json({
+    return res.status(200).json({
         success: true,
         message: 'Invoice deleted successfully',
         data: deletedInvoice,
