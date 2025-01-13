@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const { InvoiceController } = require("../../controllers")
 const { authMiddleware } = require("../../middleware/Api-auth.middleware")
+const upload = require("../../middleware/multer.middleware")
 
 router
     .route("/create_invoice")

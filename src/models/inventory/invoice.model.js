@@ -13,6 +13,11 @@ const invoiceSchema = new mongoose.Schema({
         required: false,
         type: mongoose.Schema.ObjectId
     },
+    invoiceNo: {
+        type: String,
+        required: true,
+        default: null,
+    },
     invoiceDate: {
         type: Date,
         trim: true,
@@ -90,6 +95,10 @@ const invoiceSchema = new mongoose.Schema({
         required: false,
     },
     tax: {
+        type: String,
+        required: false,
+    },
+    memo: {
         type: String,
         required: false,
     },

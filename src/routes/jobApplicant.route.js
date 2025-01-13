@@ -2,12 +2,7 @@ const express = require("express")
 const router = express.Router()
 const { ApplicantController } = require("../controllers")
 const { authMiddleware } = require("../middleware/Api-auth.middleware")
-
-const multer = require("multer");
-const upload = multer({
-    limits: 50000,
-    storage: multer.diskStorage({})
-});
+const upload = require("../middleware/multer.middleware")
 
 router
     .route("/create_applicant")

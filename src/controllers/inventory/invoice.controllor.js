@@ -1,4 +1,5 @@
 const asyncHandler = require('../../middleware/asyncHandler');
+const { Invoice } = require('../../models');
 const { InvoiceService } = require('../../services');
 
 /**
@@ -10,7 +11,42 @@ const { InvoiceService } = require('../../services');
 const createInvoice = asyncHandler(async (req, res) => {
     const invoiceData = req.body
     const userId = req.user_detail?._id
-    const invoice = await InvoiceService.createInvoice(invoiceData, userId);
+
+    // console.log("attachedFile" , req.body, "invoiceData ====>>>" , invoiceData)
+
+    // address not found
+    if (!invoiceData.billTo) {
+        return res.status(404).json({ message: "Billing and Shipping Address Required", success: false })
+    }
+    // invoice not found
+    if (!invoiceData.invoiceDate) {
+        return res.status(404).json({ message: "Invoice Date Required", success: false })
+    }
+    // subtotal not found
+    if (!invoiceData.subtotal) {
+        return res.status(404).json({ message: "Subtotal is Required", success: false })
+    }
+    // total not found
+    if (!invoiceData.total) {
+        return res.status(404).json({ message: "Total is Required", success: false })
+    }
+    // product not found
+    if (!invoiceData.product) {
+        return res.status(404).json({ message: "Product is Required", success: false })
+    }
+
+    // generate invoice number 
+    const invoiceCount = await Invoice.countDocuments();
+    const generatedInvoiceNo = `INV-00${invoiceCount + 1}`;
+
+    // save invoice
+    const invoice = new Invoice({
+        ...invoiceData,
+        createBy: userId,
+        invoiceNo: generatedInvoiceNo
+    });
+    await invoice.save();
+
     return res.status(201).json({
         success: true,
         message: 'Invoice created successfully',

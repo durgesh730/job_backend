@@ -1,16 +1,6 @@
 const asyncHandler = require('../../middleware/asyncHandler');
 const { Invoice } = require('../../models');
-
-/**
- * Creates a new invoice in the database.
- * @param {Object} invoiceData - Data for the new invoice.
- * @returns {Object} - The created invoice object.
- * @throws {Error} - Throws an error if the invoice creation fails.
- */
-const createInvoice = asyncHandler(async (invoiceData, id) => {
-    const invoice = new Invoice({ ...invoiceData, createBy: id });
-    return await invoice.save();
-});
+const ErrorResponse = require('../../utils/ErrorResponse');
 
 /**
  * Retrieves all invoices from the database.
@@ -53,7 +43,6 @@ const deleteInvoice = asyncHandler(async (id) => {
 });
 
 module.exports = {
-    createInvoice,
     getInvoices,
     getInvoiceById,
     updateInvoice,
