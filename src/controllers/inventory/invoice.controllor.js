@@ -13,6 +13,7 @@ const createInvoice = asyncHandler(async (req, res) => {
     const invoiceData = req.body
     const userId = req.user_detail?._id
 
+    console.log("invoiceData ====>>", invoiceData)
     // address not found
     if (!invoiceData.billTo) {
         return res.status(404).json({ message: "Billing and Shipping Address Required", success: false })
@@ -22,7 +23,7 @@ const createInvoice = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: "Invoice Date Required", success: false })
     }
     // subtotal not found
-    if (!invoiceData.subtotal) {
+    if (!invoiceData.subTotal) {
         return res.status(404).json({ message: "Subtotal is Required", success: false })
     }
 
@@ -38,7 +39,7 @@ const createInvoice = asyncHandler(async (req, res) => {
 
     // Retrieve the latest invoice
     const latestInvoice = await Invoice.findOne().sort({ createdAt: -1 });
-
+    console.log("latestInvoice", latestInvoice)
     // Generate a new invoice number
     const lastNumber = latestInvoice ? extractNumber(latestInvoice.invoiceNo) : 0;
     const generatedInvoiceNo = `INV-${String(lastNumber + 1).padStart(3, '0')}`;

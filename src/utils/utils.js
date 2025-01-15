@@ -1,5 +1,5 @@
 
-const extractNumber = () => {
+const extractNumber = (str) => {
     const match = str.match(/\d+$/);
 
     if (match) {
