@@ -2,8 +2,14 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
     createBy: {
-        required: false,
-        type: mongoose.Schema.ObjectId
+        type: mongoose.Schema.ObjectId,
+        required: [true, "Login User Id is required"],
+    },
+    productId: {
+        type: String,
+        trim: true,
+        required: [true, "Product Id is required"],
+        default: null,
     },
     number: {
         type: String,
@@ -14,7 +20,7 @@ const productSchema = new mongoose.Schema({
     productName: {
         type: String,
         trim: true,
-        required: false,
+        required: [true, "Product Name is required"],
         default: null,
     },
     category: {
@@ -54,9 +60,9 @@ const productSchema = new mongoose.Schema({
         default: null,
     },
     description: {
-        type: Array,
+        type: String,
         trim: true,
-        required: true,
+        required: false,
     },
     UOM: {
         type: String,
@@ -79,6 +85,16 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
+    product_image: {
+        type: Object,
+        required: false,
+        default: null
+    },
+    attachment_file: {
+        type: Object,
+        required: false,
+        default: null
+    }
 },
     { timestamps: true }
 );

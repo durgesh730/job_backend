@@ -43,13 +43,6 @@ const saveApplicants = async (body) => {
     }
 
     try {
-
-        // console.log("cloudinaryResult ====>>", data.attachment)
-        // const parser = new DatauriParser();
-        // const extName = path.extname(data.attachment.originalname).toString();
-        // const y = parser.format(extName, data.attachment.buffer)
-        // console.log("ext ===============>>> ", y)
-
         const cloudinaryResult = await uploadImage(data.attachment.path);
         console.log("Uploaded Attachment URL:", cloudinaryResult);
         data.attachment = {

@@ -3,7 +3,14 @@ const { ProductService } = require("../../services");
 // Create Product
 const createProduct = async (req, res) => {
     try {
-        const product = await ProductService.createProduct(req.body);
+        const { body, files } = req;
+        const userId = req.user_detail?._id
+
+        if (!body.productName) {
+            return res.status(404).json({ message: "Product Name Required", product });
+        }
+        
+        const product = await ProductService.createProduct(body, files, userId);
         res.status(201).json({ message: "Product created successfully", product });
     } catch (error) {
         res.status(500).json({ message: "Error creating product", error: error.message });

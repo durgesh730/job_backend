@@ -1,6 +1,7 @@
 const asyncHandler = require('../../middleware/asyncHandler');
 const { Invoice } = require('../../models');
 const { InvoiceService } = require('../../services');
+const { extractNumber } = require('../../utils/utils');
 
 /**
  * Creates a new invoice.
@@ -11,8 +12,6 @@ const { InvoiceService } = require('../../services');
 const createInvoice = asyncHandler(async (req, res) => {
     const invoiceData = req.body
     const userId = req.user_detail?._id
-
-    // console.log("attachedFile" , req.body, "invoiceData ====>>>" , invoiceData)
 
     // address not found
     if (!invoiceData.billTo) {
@@ -26,18 +25,23 @@ const createInvoice = asyncHandler(async (req, res) => {
     if (!invoiceData.subtotal) {
         return res.status(404).json({ message: "Subtotal is Required", success: false })
     }
+
     // total not found
     if (!invoiceData.total) {
         return res.status(404).json({ message: "Total is Required", success: false })
     }
+
     // product not found
     if (!invoiceData.product) {
         return res.status(404).json({ message: "Product is Required", success: false })
     }
 
-    // generate invoice number 
-    const invoiceCount = await Invoice.countDocuments();
-    const generatedInvoiceNo = `INV-00${invoiceCount + 1}`;
+    // Retrieve the latest invoice
+    const latestInvoice = await Invoice.findOne().sort({ createdAt: -1 });
+
+    // Generate a new invoice number
+    const lastNumber = latestInvoice ? extractNumber(latestInvoice.invoiceNo) : 0;
+    const generatedInvoiceNo = `INV-${String(lastNumber + 1).padStart(3, '0')}`;
 
     // save invoice
     const invoice = new Invoice({

@@ -1,8 +1,36 @@
+const { uploadImage } = require("../../helpers/cloudinaryUploader");
 const { Product } = require("../../models");
 
 // Create a new product
-const createProduct = async (productData) => {
-    const product = new Product(productData);
+const createProduct = async (productData, file, id) => {
+    // generate product id 
+    const invoiceCount = await Product.countDocuments();
+    const generatedProductId = `P-000${invoiceCount + 1}`;
+
+    if (file.product_image) {
+        const image = await uploadImage(file.product_image[0].path);
+        productData.product_image = {
+            public_id: image.public_id,
+            asset_id: image.asset_id,
+            url: image.secure_url
+        }
+    }
+
+    if (file.attachment_file) {
+        const filer = await uploadImage(file.attachment_file[0].path)
+        productData.attachment_file = {
+            public_id: filer.public_id,
+            asset_id: filer.asset_id,
+            url: filer.secure_url
+        }
+    }
+
+    const product = new Product({
+        ...productData,
+        productId: generatedProductId,
+        createBy: id
+    });
+
     return await product.save();
 };
 
