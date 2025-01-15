@@ -6,7 +6,9 @@ const upload = require("../../middleware/multer.middleware")
 
 router
     .route("/create_invoice")
-    .post(authMiddleware("inventory"), InvoiceController.createInvoice)
+    .post(authMiddleware("inventory"),
+        upload.single("attachedFile"),
+        InvoiceController.createInvoice)
 
 router
     .route("/get_invoice_by_id/:id")

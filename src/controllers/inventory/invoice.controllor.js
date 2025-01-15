@@ -1,3 +1,4 @@
+const { uploadImage } = require('../../helpers/cloudinaryUploader');
 const asyncHandler = require('../../middleware/asyncHandler');
 const { Invoice } = require('../../models');
 const { InvoiceService } = require('../../services');
@@ -13,7 +14,6 @@ const createInvoice = asyncHandler(async (req, res) => {
     const invoiceData = req.body
     const userId = req.user_detail?._id
 
-    console.log("invoiceData ====>>", invoiceData)
     // address not found
     if (!invoiceData.billTo) {
         return res.status(404).json({ message: "Billing and Shipping Address Required", success: false })
@@ -39,10 +39,20 @@ const createInvoice = asyncHandler(async (req, res) => {
 
     // Retrieve the latest invoice
     const latestInvoice = await Invoice.findOne().sort({ createdAt: -1 });
-    console.log("latestInvoice", latestInvoice)
+
     // Generate a new invoice number
     const lastNumber = latestInvoice ? extractNumber(latestInvoice.invoiceNo) : 0;
     const generatedInvoiceNo = `INV-${String(lastNumber + 1).padStart(3, '0')}`;
+    console.log("req " , req.file)
+
+    if (req.file) {
+        const image = await uploadImage(req.file.attachedFile.path);
+        productData.product_image = {
+            public_id: image.public_id,
+            asset_id: image.asset_id,
+            url: image.secure_url
+        }
+    }
 
     // save invoice
     const invoice = new Invoice({
