@@ -1,5 +1,6 @@
 const asyncHandler = require('../../middleware/asyncHandler');
 const { Invoice } = require('../../models');
+const invoiceModel = require('../../models/inventory/invoice.model');
 const ErrorResponse = require('../../utils/ErrorResponse');
 
 /**
@@ -20,7 +21,7 @@ const getInvoiceById = asyncHandler(async (id) => {
  * @throws {Error} - Throws an error if updating the invoice fails.
  */
 const updateInvoice = asyncHandler(async (id, updateData) => {
-    return await Invoice.findByIdAndUpdate(id, updateData, { new: true });
+    return await invoiceModel.findByIdAndUpdate(id, updateData, { new: true });
 })
 
 /**
@@ -30,7 +31,8 @@ const updateInvoice = asyncHandler(async (id, updateData) => {
  * @throws {Error} - Throws an error if deleting the invoice fails.
  */
 const deleteInvoice = asyncHandler(async (id) => {
-    return await Invoice.findByIdAndDelete(id);
+    const INV = Invoice.findByIdAndDelete(id)
+    return INV;
 });
 
 module.exports = {

@@ -1,6 +1,7 @@
 const { uploadImage } = require('../../helpers/cloudinaryUploader');
 const asyncHandler = require('../../middleware/asyncHandler');
 const { Invoice } = require('../../models');
+const invoiceModel = require('../../models/inventory/invoice.model');
 const { InvoiceService } = require('../../services');
 const { extractNumber } = require('../../utils/utils');
 
@@ -168,11 +169,12 @@ const updateInvoice = asyncHandler(async (req, res) => {
  */
 const deleteInvoice = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const deletedInvoice = await InvoiceService.deleteInvoice(id);
+    const deletedInvoice = await invoiceModel.findByIdAndDelete(id);
     if (!deletedInvoice) {
         return res.status(404).json({
             success: false,
             message: 'Invoice not found',
+            data: null
         });
     }
     return res.status(200).json({
