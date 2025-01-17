@@ -3,15 +3,18 @@ const mongoose = require("mongoose");
 const invoiceSchema = new mongoose.Schema({
     createBy: {
         required: false,
-        type: mongoose.Schema.ObjectId
+        type: mongoose.Schema.ObjectId,
+        ref:"inventoryAuth"
     },
     billTo: {
         required: false,
-        type: mongoose.Schema.ObjectId
+        type: mongoose.Schema.ObjectId,
+        ref:"Customer"
     },
     shipTo: {
         required: false,
-        type: mongoose.Schema.ObjectId
+        type: mongoose.Schema.ObjectId,
+          ref:"Customer"
     },
     invoiceNo: {
         type: String,

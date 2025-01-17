@@ -76,10 +76,43 @@ const createInvoice = asyncHandler(async (req, res) => {
  * @returns {Object} - JSON response with an array of all invoices.
  */
 const getInvoices = asyncHandler(async (req, res) => {
-    const invoices = await Invoice.find();
-    return res.status(200).json({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const query = req.query.query?.trim();
+
+    const skip = (page - 1) * limit;
+
+    const searchCondition = query
+        ? {
+            $or: [
+                { invoiceNo: { $regex: query, $options: "i" } },
+                { contact: { $regex: query, $options: "i" } },
+                { invoiceDate: { $regex: query, $options: "i" } },
+            ],
+        }
+        : {};
+
+    const invoices = await Invoice.find(searchCondition)
+        .populate({
+            path: 'createBy',
+            select: 'name profile_image email',
+        })
+        .populate({ path: 'billTo' })
+        .populate({ path: 'shipTo' })
+        .select("-product")
+        .skip(skip)
+        .limit(limit);
+
+    const totalItems = await Invoice.countDocuments(searchCondition);
+
+    return res.status(201).json({
+        msg: "Fetched successfully",
         success: true,
         data: invoices,
+        currentPage: page,
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems: totalItems,
+        limit,
     });
 });
 
