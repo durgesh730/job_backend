@@ -43,7 +43,7 @@ const createInvoice = asyncHandler(async (req, res) => {
     // Generate a new invoice number
     const lastNumber = latestInvoice ? extractNumber(latestInvoice.invoiceNo) : 0;
     const generatedInvoiceNo = `INV-${String(lastNumber + 1).padStart(3, '0')}`;
-    console.log("req " , req.file)
+    console.log("req ", req.file)
 
     if (req.file) {
         const image = await uploadImage(req.file.attachedFile.path);
@@ -76,7 +76,7 @@ const createInvoice = asyncHandler(async (req, res) => {
  * @returns {Object} - JSON response with an array of all invoices.
  */
 const getInvoices = asyncHandler(async (req, res) => {
-    const invoices = await InvoiceService.getInvoices();
+    const invoices = await Invoice.find();
     return res.status(200).json({
         success: true,
         data: invoices,

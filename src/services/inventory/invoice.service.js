@@ -3,15 +3,6 @@ const { Invoice } = require('../../models');
 const ErrorResponse = require('../../utils/ErrorResponse');
 
 /**
- * Retrieves all invoices from the database.
- * @returns {Array} - Array of invoice objects.
- * @throws {Error} - Throws an error if retrieving invoices fails.
- */
-const getInvoices = asyncHandler(async () => {
-    return await Invoice.find({});
-});
-
-/**
  * Retrieves an invoice by its ID from the database.
  * @param {String} id - The ID of the invoice to retrieve.
  * @returns {Object|null} - The invoice object if found, or null if not found.
@@ -43,7 +34,6 @@ const deleteInvoice = asyncHandler(async (id) => {
 });
 
 module.exports = {
-    getInvoices,
     getInvoiceById,
     updateInvoice,
     deleteInvoice,
